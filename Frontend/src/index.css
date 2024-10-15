@@ -1,0 +1,107 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html, body, h1, h2, h3, h4, h5, h6, p, span, div, a {
+    font-family: 'Montserrat', sans-serif;
+  }
+}
+
+body {
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.5s ease-in-out;
+}
+
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.toolbar .btn {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  color: white;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  color: white;
+}
+
+.draggable {
+  cursor: move;
+}
+
+/* Add these styles for proper list numbering */
+.blog-content ol {
+  list-style-type: decimal;
+  padding-left: 1.5em;
+}
+
+.blog-content ol ol {
+  list-style-type: lower-alpha;
+}
+
+.blog-content ol ol ol {
+  list-style-type: lower-roman;
+}
+
+
+
+/* Optional: Adjust the margins for better spacing */
+.mb-6 {
+  margin-bottom: 2rem; /* Increase bottom margin */
+}
+
+.ql-toolbar {
+  background-color: #ffffff; /* Set toolbar background to white */
+}
+.ql-toolbar button {
+  color: #000000; /* Set button text to black */
+}
+.ql-toolbar button:hover {
+  color: #000000; /* Set button text to black on hover */
+}
+.ql-toolbar button {
+  border: none; /* Remove button border */
+  padding: 0; /* Remove button padding */
+  background-color: transparent; /* Set button background to transparent */
+}
+.ql-toolbar button:hover {
+  background-color: transparent; /* Set button background to transparent on hover */
+}
+.ql-editor {
+  background-color: #ffffff; /* Set content area background to white */
+  padding: 10px; /* Add padding to content area */
+}

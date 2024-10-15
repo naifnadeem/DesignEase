@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Invoice</title>
+    <style>
+        /* Add some basic styling to make the SVG elements visible */
+        svg {
+            border: 1px solid #ccc;
+        }
+        text {
+            font-family: Arial;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <svg width="800" height="1200" xmlns="http://www.w3.org/2000/svg">
+        <!-- Logo -->
+        <g id="logoGroup" transform="translate(50, 80)">
+            <text id="logoTitle" font-size="40" fill="#333">NERD</text>
+            <text id="logoSubtitle" y="40" font-size="20" fill="#777">BE HAPPY</text>
+        </g>
+
+        <!-- Company Info -->
+        <g id="companyInfoGroup" transform="translate(500, 50)">
+            <text id="companyName" font-size="16" fill="#333">Bashari Exclusive</text>
+            <text id="companyAddress" y="20" font-size="14" fill="#777">Plot no 65, Gulshan</text>
+            <text id="companyEmail" y="40" font-size="14" fill="#777">Email: info@nerd.com</text>
+            <text id="companyPhone" y="60" font-size="14" fill="#777">Phone: +880 12345 67890</text>
+        </g>
+
+        <!-- Invoice Title -->
+        <rect id="invoiceTitleRect" x="0" y="150" width="800" height="60" fill="#26a69a" />
+        <text id="invoiceTitle" x="50" y="190" font-size="40" fill="#fff">INVOICE</text>
+
+        <!-- Invoice Details -->
+        <g id="invoiceDetailsGroup" transform="translate(50, 250)">
+            <text id="totalDueLabel" font-size="18" fill="#333">Total Due</text>
+            <text id="totalDueAmount" x="150" font-size="18" fill="#333">300,000 BDT</text>
+            <!-- ... -->
+        </g>
+
+        <!-- Client Information -->
+        <g id="clientInfoGroup" transform="translate(50, 380)">
+            <text id="clientLabel" font-size="18" fill="#333">To:</text>
+            <text id="clientName" x="150" font-size="18" fill="#333">Farhan Shahriar</text>
+            <!-- ... -->
+        </g>
+
+        <!-- Table Headers -->
+        <rect id="tableHeaderRect" x="0" y="500" width="800" height="40" fill="#26a69a" />
+        <text id="tableSL" x="50" y="530" font-size="18" fill="#fff">SL</text>
+        <text id="tableItems" x="150" y="530" font-size="18" fill="#fff">Items</text>
+        <!-- ... -->
+
+        <!-- Table Content -->
+        <g id="tableContentGroup" transform="translate(50, 580)">
+            <text id="item1SL" font-size="18" fill="#333">1</text>
+            <text id="item1Desc" x="150" font-size="18" fill="#333">Set Design, Development &amp; Decor</text>
+            <!-- ... -->
+        </g>
+
+        <!-- Footer -->
+        <g id="footerGroup" transform="translate(50, 1100)">
+            <text id="footerMessage" font-size="16" fill="#777">Thank you for your business</text>
+            <text id="footerWebsite" y="20" font-size="16" fill="#777">www.nerdcompany.com</text>
+            <text id="footerPhone" y="40" font-size="16" fill="#777">+880 12345 123456</text>
+        </g>
+    </svg>
+
+    
+</body>
+</html>

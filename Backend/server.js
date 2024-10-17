@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import path from "path";
-import fs from "fs";
+import fs from "fs";  
 import { fileURLToPath } from 'url';
 import authRoutes from "./routes/authRoute.js";
 import adminRouter from "./routes/adminRouter.js";
@@ -16,9 +16,6 @@ import authenticateUser from "./middleware/auth.js";
 import blogRoute from "./routes/blogRoutes.js";
 import adminBlogRoute from "./routes/adminBlogRoutes.js";
 import totalRoutes from './routes/totalRoutes.js'; // Ensure correct path to your routes file
-
-
-
 
 dotenv.config();
 
@@ -35,8 +32,18 @@ mongoose
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use(cookieParser());
+
+// CORS Setup to Allow Multiple Frontend Origins
+const allowedOrigins = [process.env.CLIENT_URL, 'https://design-ease.vercel.app', 'https://design-ease-vazq.vercel.app'];
+
 app.use(cors({
-  origin: process.env.CLIENT_URL,  // Your frontend origin
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
 }));
 
@@ -57,18 +64,18 @@ app.use("/uploads/html", express.static(path.join(uploadsPath, 'html')));
 // File upload API endpoint
 app.post('/api/admin/upload', upload.single('file'), async (req, res) => {
   if (req.file) {
-      try {
-          if (req.file.mimetype === 'text/html') {
-              const thumbnailPath = path.join(path.dirname(req.file.path), `${req.file.originalname}.png`);
-              await generateThumbnailForHtmlFile(req.file.path, thumbnailPath);
-          }
-          res.status(201).send(`File uploaded successfully to ${req.file.path}`);
-      } catch (err) {
-          console.error("Error processing file upload:", err);
-          res.status(500).json({ message: 'Error processing file upload', error: err.message });
+    try {
+      if (req.file.mimetype === 'text/html') {
+        const thumbnailPath = path.join(path.dirname(req.file.path), `${req.file.originalname}.png`);
+        await generateThumbnailForHtmlFile(req.file.path, thumbnailPath);
       }
+      res.status(201).send(`File uploaded successfully to ${req.file.path}`);
+    } catch (err) {
+      console.error("Error processing file upload:", err);
+      res.status(500).json({ message: 'Error processing file upload', error: err.message });
+    }
   } else {
-      res.status(400).json({ message: 'No file uploaded or unsupported file type' });
+    res.status(400).json({ message: 'No file uploaded or unsupported file type' });
   }
 });
 
@@ -249,39 +256,30 @@ app.post('/api/saveLogo', authenticateUser, async (req, res) => {
   }
 });
 
-
-// User Blogs 
-
-
-app.get("/", (req, res) => {
-  res.send("Hello World");
-});
-
-// Routes
+// Routes for user authentication, blogs, and totals
 app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRouter);
 app.use("/api/blogs", blogRoute);
-app.use("/api/admin/blogs", adminBlogRoute)
-app.use('/api', totalRoutes); // Mount the routes at /api
+app.use("/api/adminBlogs", adminBlogRoute);
+app.use("/api/total", totalRoutes);
 
-
-
-
-
-
-// Error handling middleware
+// Handle errors
 app.use((err, req, res, next) => {
-  const statusCode = err.statusCode || 500;
-  const message = err.message || "Internal Server Error";
-  console.error(err);
-  res.status(statusCode).json({
-    success: false,
-    statusCode,
-    message,
-  });
+  console.error(err.stack);
+  res.status(500).send('Something broke!');
 });
+
+// Serve static files for production
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, 'client', 'build')));
+
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'client', 'build', 'index.html'));
+  });
+}
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
+

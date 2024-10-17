@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
   Upload, 
@@ -7,13 +7,11 @@ import {
   PlusCircle, 
   LogOut, 
   ChevronRight,
-  Settings,
-  Bell,
-  Search,
   Layout,
-  MessageSquare,
-  User
+  Users,
+  File,
 } from "lucide-react";
+import axios from 'axios'; // Import axios for API calls
 
 // Assumed components (to be implemented separately)
 import UploadComponent from "../../component/UploadComponent";
@@ -29,6 +27,27 @@ const AdminDashboard = () => {
   });
   const [activeSection, setActiveSection] = useState('dashboard');
   const [isSidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [totals, setTotals] = useState({
+    users: 0,
+    blogs: 0,
+    logos: 0,
+    templates: 0
+  });
+
+  // Fetching the totals from the backend API
+  useEffect(() => {
+    const fetchTotals = async () => {
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/totals`); // API call to your backend route
+        const { users, blogs, logos, templates } = response.data;
+        setTotals({ users, blogs, logos, templates });
+      } catch (error) {
+        console.error('Error fetching totals:', error);
+      }
+    };
+
+    fetchTotals();
+  }, []);
 
   const handleLogout = useCallback(() => {
     localStorage.removeItem("admin");
@@ -41,11 +60,9 @@ const AdminDashboard = () => {
     { id: 'addBlog', icon: <PlusCircle size={20} />, label: 'Add Blog' },
     { id: 'gallery', icon: <ImageIcon size={20} />, label: 'Manage Gallery' },
     { id: 'blogs', icon: <FileText size={20} />, label: 'Manage Blogs' },
-    // Logout button added as a menu item
     { id: 'logout', icon: <LogOut size={20} />, label: 'Logout', onClick: handleLogout }
   ];
 
- 
   const renderContent = () => {
     switch (activeSection) {
       case 'upload':
@@ -58,8 +75,39 @@ const AdminDashboard = () => {
         return <AdminAddBlog />;
       default:
         return (
-        <>
-          <h1 className="text-2xl font-bold text-gray-800">Dashboard</h1></>
+          <>
+            <h1 className="text-2xl font-bold text-white mb-6">Dashboard Overview</h1>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="bg-blue-600 text-white p-4 rounded-lg shadow">
+                <h3 className="text-lg font-semibold">Total Users</h3>
+                <div className="flex items-center mt-2">
+                  <Users size={24} />
+                  <span className="ml-2 text-3xl font-bold">{totals.users}</span>
+                </div>
+              </div>
+              <div className="bg-green-600 text-white p-4 rounded-lg shadow">
+                <h3 className="text-lg font-semibold">Total Blogs</h3>
+                <div className="flex items-center mt-2">
+                  <FileText size={24} />
+                  <span className="ml-2 text-3xl font-bold">{totals.blogs}</span>
+                </div>
+              </div>
+              <div className="bg-yellow-600 text-white p-4 rounded-lg shadow">
+                <h3 className="text-lg font-semibold">Total Logos</h3>
+                <div className="flex items-center mt-2">
+                  <ImageIcon size={24} />
+                  <span className="ml-2 text-3xl font-bold">{totals.logos}</span>
+                </div>
+              </div>
+              <div className="bg-purple-600 text-white p-4 rounded-lg shadow">
+                <h3 className="text-lg font-semibold">Total HTML Templates</h3>
+                <div className="flex items-center mt-2">
+                  <File size={24} />
+                  <span className="ml-2 text-3xl font-bold">{totals.templates}</span>
+                </div>
+              </div>
+            </div>
+          </>
         );
     }
   };
@@ -74,7 +122,7 @@ const AdminDashboard = () => {
               <rect width="24" height="24" rx="4" fill="currentColor"/>
             </svg>
           </div>
-          {!isSidebarCollapsed && <h1 className="text-2xl font-bold text-white ml-2">Mera Project</h1>}
+          {!isSidebarCollapsed && <h1 className="text-2xl font-bold text-white ml-2">DesignEase</h1>}
         </div>
         
         <div className="px-4">
@@ -117,46 +165,24 @@ const AdminDashboard = () => {
         </div>
       </div>
 
+     
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
-        <header className="bg-white border-b border-gray-200 h-16 flex items-center justify-between px-4">
+        <header className="bg-hero-pattern h-16 flex items-center justify-between px-4">
           <button
             onClick={() => setSidebarCollapsed(!isSidebarCollapsed)}
             className="text-gray-500 hover:text-gray-700"
           >
             <ChevronRight className={`transform transition-transform duration-200 ${isSidebarCollapsed ? 'rotate-180' : ''}`} />
           </button>
-          
-          <div className="flex-1 mx-4">
-            {/* <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-              <input
-                type="text"
-                placeholder="Type to search..."
-                className="w-full max-w-xl pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-              />
-            </div> */}
-          </div>
-          
-          {/* <div className="flex items-center space-x-4">
-            <button className="text-gray-500 hover:text-gray-700">
-              <Bell size={20} />
-            </button>
-            <button className="text-gray-500 hover:text-gray-700">
-              <MessageSquare size={20} />
-            </button>
-            <div className="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center">
-              <User size={20} className="text-gray-500" />
-            </div>
-          </div> */}
         </header>
 
-        <main className="flex-1 overflow-auto p-6 bg-gray-100">
+        <main className="flex-1 overflow-auto p-6 bg-hero-pattern">
           <div className="mb-6">
-            <h1 className="text-2xl font-semibold text-gray-800">
+            <h1 className="text-2xl font-semibold text-white">
               {activeSection === 'dashboard' ? 'Dashboard' : menuItems.find(item => item.id === activeSection)?.label}
             </h1>
-            <nav className="text-gray-500 text-sm">
+            <nav className="text-white text-sm">
               <span>Dashboard</span>
               <span className="mx-2">/</span>
               <span className="text-blue-600">{menuItems.find(item => item.id === activeSection)?.label || 'Dashboard'}</span>

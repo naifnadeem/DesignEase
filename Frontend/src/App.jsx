@@ -24,6 +24,7 @@ import Blogs from "./component/Blogs";
 import BlogDetail from "./component/BlogDetail";
 import AdminBlogDetail from "./component/AdminBlogDetail";
 import AboutUs from "./pages/User/AboutUs";
+import ContactUs from "./component/ContactUs";
 
 // Protected Route for general user
 const ProtectedRoute = ({ children }) => {
@@ -123,6 +124,7 @@ function App() {
           <Route path="/admin/blog/:permalink" element={<AdminBlogDetail/>} />
           <Route path="/blog/:slug" element={<BlogDetail/>} />
           <Route path="/AboutUs" element={<AboutUs/>} />
+          <Route path="/ContactUs" element={<ContactUs/>} />
 
         
 

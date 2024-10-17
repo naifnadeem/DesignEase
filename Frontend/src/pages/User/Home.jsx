@@ -5,8 +5,16 @@ import { Sparkles, Palette, Zap, FileText, Layers, Type, Image as ImageIcon, Sta
 import FeaturedBlogs from "../../component/FeaturedBlogs";
 
 const Home = () => {
-  const [loggedIn, setLoggedIn] = useState(false); // Add loggedIn state
+  const [loggedIn, setLoggedIn] = useState(false); // State for logged-in status
   const [blogs, setBlogs] = useState([]); // State to store blogs
+
+  // Check if the user is logged in by checking localStorage or any other method you use
+  useEffect(() => {
+    const userType = localStorage.getItem("user"); // Adjust key as needed
+    if (userType) {
+      setLoggedIn(true);
+    }
+  }, []);
 
   const handleGetStarted = () => {
     window.location.href = "/Signup";
@@ -16,9 +24,19 @@ const Home = () => {
     window.location.href = "/Login";
   };
 
-  const handleCreateInvoice = () => {
-    console.log("Navigating to invoice creator");
+  const handleDashboard = () => {
+    window.location.href = "/Dashboard"; // Change this path to your dashboard route
   };
+
+  const handleCreateInvoice = () => {
+    window.location.href = "/Templates";
+  };
+  const handleCreateLogo = () => {
+    window.location.href = "/Templates";
+  }
+  const handleCreateDesign = () => {
+    window.location.href = "/Templates";
+  }
 
   const [activeDesign, setActiveDesign] = useState(0);
   const designs = [
@@ -72,7 +90,7 @@ const Home = () => {
             Create stunning brands, logos, and marketing materials in minutes, not hours.
           </p>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 ">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
             <FeatureCard
               icon={Sparkles}
               title="Intuitive Tools"
@@ -92,7 +110,12 @@ const Home = () => {
         
           <div className="flex flex-col md:flex-row items-center justify-center gap-4">
             {loggedIn ? (
-              <span className="text-white text-lg">Welcome back! Start designing.</span>
+              <button
+                onClick={handleDashboard}
+                className="bg-yellow-500 text-gray-900 px-8 py-3 rounded-full text-lg font-semibold hover:bg-yellow-300 transition duration-300 ease-in-out transform hover:scale-105"
+              >
+                Go to Dashboard
+              </button>
             ) : (
               <>
                 <button
@@ -166,7 +189,7 @@ const Home = () => {
                 possibilities to design the perfect logo that represents your brand identity.
               </p>
               <button
-                onClick={() => console.log("Navigating to logo maker")}
+                onClick={handleCreateLogo}
                 className="bg-blue-600 text-white px-6 py-3 rounded-full text-lg font-semibold hover:bg-blue-700 transition duration-300 ease-in-out flex items-center animate-pulse"
               >
                 <ImageIcon className="mr-2" /> Create a Logo
@@ -197,15 +220,14 @@ const Home = () => {
             <p className="text-white text-xl mb-6">
               From stunning layouts to eye-catching graphics, bring your vision to life with our powerful design tools.
             </p>
-            <button className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-8 py-3 rounded-full text-lg font-semibold hover:from-purple-600 hover:to-pink-600 transition duration-300 ease-in-out transform hover:scale-105 animate-pulse">
+            <button onClick={handleCreateDesign} className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-8 py-3 rounded-full text-lg font-semibold hover:from-purple-600 hover:to-pink-600 transition duration-300 ease-in-out transform hover:scale-105 animate-pulse">
               Start Designing Now
             </button>
           </div>
         </div>
 
         {/* Featured Blogs Section */}
- {/* Featured Blogs Section */}
-<FeaturedBlogs blogs={blogs} />
+        <FeaturedBlogs blogs={blogs} />
 
       </div>
       <Footer />

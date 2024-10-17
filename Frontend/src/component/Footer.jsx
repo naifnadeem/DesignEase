@@ -7,24 +7,24 @@ const Footer = () => {
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
-            <h3 className="text-2xl font-bold mb-4">DesignEase</h3>
+            <a href="/">  <h3 className="text-2xl hover:text-yellow-500 transition-colors  font-bold mb-4">DesignEase</h3></a>
+          
             <p className="text-gray-400">Empowering creativity through intuitive design tools.</p>
           </div>
           <div>
             <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
             <ul className="space-y-2">
               <li><a href="/" className="hover:text-yellow-500 transition-colors">Home</a></li>
-              <li><a href="/services" className="hover:text-yellow-500 transition-colors">Services</a></li>
-              <li><a href="/pricing" className="hover:text-yellow-500 transition-colors">Pricing</a></li>
-              <li><a href="/contact" className="hover:text-yellow-500 transition-colors">Contact</a></li>
+              <li><a href="/Templates" className="hover:text-yellow-500 transition-colors">Templates</a></li>
+              <li><a href="/AboutUs" className="hover:text-yellow-500 transition-colors">About Us</a></li>
+              <li><a href="/ContactUs" className="hover:text-yellow-500 transition-colors">Contact</a></li>
             </ul>
           </div>
           <div>
             <h4 className="text-lg font-semibold mb-4">Tools</h4>
             <ul className="space-y-2">
-              <li><a href="/logo-maker" className="hover:text-yellow-500 transition-colors">Logo Maker</a></li>
-              <li><a href="/invoice-creator" className="hover:text-yellow-500 transition-colors">Invoice Creator</a></li>
-              <li><a href="/brand-templates" className="hover:text-yellow-500 transition-colors">Brand Templates</a></li>
+              <li><a href="/Templates" className="hover:text-yellow-500 transition-colors">Logo Maker</a></li>
+              <li><a href="/Templates" className="hover:text-yellow-500 transition-colors">Invoice Creator</a></li>
             </ul>
           </div>
           <div>

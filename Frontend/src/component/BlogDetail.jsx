@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Calendar, Clock, ChevronLeft } from 'lucide-react';
+import Footer from './Footer';
+import Navbar from './Navbar';
 
 const BlogDetail = () => {
   const { slug } = useParams();
   const [blog, setBlog] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchBlog = async () => {
@@ -32,15 +35,15 @@ const BlogDetail = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen bg-gray-900">
-        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-white"></div>
+      <div className="flex justify-center items-center h-screen">
+        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-900"></div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="bg-red-900 border border-red-400 text-white px-4 py-3 rounded relative" role="alert">
+      <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
         <strong className="font-bold">Error!</strong>
         <span className="block sm:inline"> {error}</span>
       </div>
@@ -61,33 +64,47 @@ const BlogDetail = () => {
     if (!blog.featureImage) return null;
     
     const imgClass = "w-full h-64 object-cover rounded-lg shadow-lg mb-6";
-    
-    return <img src={blog.featureImage} alt={blog.title} className={imgClass} />;
+    const fallbackImage = "/images/default.jpg";
+
+    return (
+      <img 
+        src={blog.featureImage || fallbackImage} 
+        alt={blog.title} 
+        onError={(e) => e.target.src = fallbackImage} 
+        className={imgClass} 
+      />
+    );
   };
 
   return (
-    <div className="bg-gray-900 min-h-screen text-white py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
-        <a href="#" className="inline-flex items-center text-blue-400 hover:underline mb-4">
-          <ChevronLeft className="mr-2" size={20} />
-          Back to Blog List
-        </a>
-        <article className="bg-gray-800 rounded-lg shadow-lg p-6">
-          <h1 className="text-4xl font-bold mb-4">{blog.title}</h1>
-          <div className="flex items-center text-gray-400 mb-6">
-            <Calendar className="mr-2" size={20} />
-            <span className="mr-4">{new Date(blog.createdAt).toLocaleDateString()}</span>
-            <Clock className="mr-2" size={20} />
-            <span>{blog.readTime || '5 min'} read</span>
-          </div>
-          {renderFeatureImage()}
-          <div 
-            className="prose prose-invert lg:prose-lg max-w-none"
-            dangerouslySetInnerHTML={createMarkup(blog.content)} 
-          />
-        </article>
-      </div>
+    <>
+    <Navbar userType="user"/>
+     <div className="container mx-auto px-4 py-8 font-montserrat">
+      <button
+        onClick={() => navigate('/blog')}
+        className="inline-flex items-center text-blue-600 hover:underline mb-4"
+      >
+        <ChevronLeft className="mr-2" size={20} />
+        Back to Blog List
+      </button>
+      <article className="bg-white rounded-lg shadow-lg p-6">
+        <h1 className="text-4xl font-bold mb-4">{blog.title}</h1>
+        <div className="flex items-center text-gray-600 mb-6">
+          <Calendar className="mr-2" size={20} />
+          <span className="mr-4">{new Date(blog.createdAt).toLocaleDateString()}</span>
+          <Clock className="mr-2" size={20} />
+          <span>{blog.readTime || '5 min'} read</span>
+        </div>
+        {renderFeatureImage()}
+        <div 
+          className="prose lg:prose-sm max-w-none blog-content"
+          dangerouslySetInnerHTML={createMarkup(blog.content)} 
+        />
+      </article>
     </div>
+    <Footer/>
+    </>
+   
   );
 };
 

@@ -14,7 +14,8 @@ import SaveTemplate from './models/savedTemplate.model.js';
 import Logo from './models/logo.model.js';
 import authenticateUser from "./middleware/auth.js";
 import blogRoute from "./routes/blogRoutes.js";
-import adminBlogRoute from "./routes/adminBlogRoutes.js"; 
+import adminBlogRoute from "./routes/adminBlogRoutes.js";
+import totalRoutes from './routes/totalRoutes.js'; // Ensure correct path to your routes file
 
 
 
@@ -97,6 +98,35 @@ app.get("/api/admin/gallery/html", (req, res) => {
   });
   
   res.json(htmlFilesWithThumbnails);
+});
+
+app.delete("/api/admin/gallery/:type/:filename", (req, res) => {
+  const { type, filename } = req.params;
+  
+  let folderPath;
+  switch (type) {
+    case 'images':
+      folderPath = path.join(uploadsPath, 'images');
+      break;
+    case 'videos':
+      folderPath = path.join(uploadsPath, 'videos');
+      break;
+    case 'html':
+      folderPath = path.join(uploadsPath, 'html');
+      break;
+    default:
+      return res.status(400).json({ message: 'Invalid file type' });
+  }
+
+  const filePath = path.join(folderPath, filename);
+
+  fs.unlink(filePath, (err) => {
+    if (err) {
+      console.error(`Error deleting ${type}:`, err);
+      return res.status(500).json({ message: `Error deleting ${type}` });
+    }
+    res.json({ message: `${filename} deleted successfully` });
+  });
 });
 
 // Serve uploaded files
@@ -232,6 +262,8 @@ app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRouter);
 app.use("/api/blogs", blogRoute);
 app.use("/api/admin/blogs", adminBlogRoute)
+app.use('/api', totalRoutes); // Mount the routes at /api
+
 
 
 

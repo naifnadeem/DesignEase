@@ -6,6 +6,7 @@ import 'react-quill/dist/quill.snow.css';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'; 
 import Navbar from '../../component/Navbar';
+import Footer from '../../component/Footer';
 
 const MyBlogs = () => {
   const [blogs, setBlogs] = useState([]);
@@ -195,6 +196,7 @@ const MyBlogs = () => {
           </div>
         )}
       </div>
+      <Footer/>
     </>
   );
 };

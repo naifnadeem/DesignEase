@@ -23,34 +23,33 @@ const Signup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setMessage(''); // Clear previous messages
+    setError(''); // Clear previous errors
+
     try {
       if (formData.password !== formData.confirmPassword) {
         setError('Passwords do not match');
         return;
       }
+
       const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/signup`, formData);
       setMessage('User registered successfully! Redirecting to Login');
-      setError('');
+      
       setTimeout(() => {
-        setMessage('');
-        navigate('/Login');
+        navigate('/login'); // Redirect after success
       }, 3000);
     } catch (error) {
-      setError('Error registering user: ' + error.response.data.message);
-      setMessage('');
-      setTimeout(() => {
-        setError('');
-      }, 10000);
+      setError(error.response?.data?.message || 'Error registering user');
     }
   };
 
   return (
     <div className="w-full h-screen bg-sign-up bg-cover bg-center flex justify-center items-center">
       <div className="container mx-auto p-4 pt-6 md:p-12 lg:p-28 bg-black bg-opacity-50 max-w-md md:max-w-lg lg:max-w-xl rounded-lg flex flex-col justify-center items-center">
-      <h2 className="text-white text-3xl font-bold text-center">Create an Account</h2>
+        <h2 className="text-white text-3xl font-bold text-center">Create an Account</h2>
 
-        {message && <div className="text-green-500 mb-4">{message}</div>}
-        {error && <div className="text-red-500 mb-4">{error}</div>}
+        {message && <div className="text-green-500 mb-4" aria-live="polite">{message}</div>}
+        {error && <div className="text-red-500 mb-4" aria-live="assertive">{error}</div>}
 
         <form onSubmit={handleSubmit} className="w-full flex flex-col items-center">
           <div className="w-full mb-4">
@@ -87,7 +86,7 @@ const Signup = () => {
               onChange={handleChange}
               className="w-full p-2 rounded bg-white text-black focus:outline-none"
               required
-              minLength="6"
+              minLength="8" // Keep this for frontend validation
             />
           </div>
           <div className="w-full mb-4">

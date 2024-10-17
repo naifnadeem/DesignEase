@@ -100,10 +100,10 @@ const SavedTemplatesAndLogos = () => {
 
   return (
     <>
-    <div className="min-h-screen bg-hero-pattern py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-hero-pattern bg-cover py-12 px-4 sm:px-6 lg:px-8">
       <Navbar userType="user" />
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-4xl font-bold text-white text-center mb-12">Saved Templates and Logos</h1>
+        <h1 className="text-4xl font-bold text-white text-center mt-16 mb-5">Saved Templates and Logos</h1>
 
         <section>
           <h2 className="text-3xl font-bold text-white mb-6">Saved Invoices</h2>

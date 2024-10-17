@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams , useNavigate} from 'react-router-dom';
 import { Calendar, Clock, ChevronLeft } from 'lucide-react';
+import Navbar from './Navbar';
+import Footer from './Footer';
 
 const AdminBlogDetail = () => {
   const { permalink } = useParams();
   const [adminBlog, setAdminBlog] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
+
 
   useEffect(() => {
     const fetchAdminBlog = async () => {
@@ -70,11 +74,16 @@ const AdminBlogDetail = () => {
   };
 
   return (
+  <>
+  <Navbar userType="user"/>
     <div className="container mx-auto px-4 py-8 font-montserrat">
-      <a href="#" className="inline-flex items-center text-blue-600 hover:underline mb-4">
+        <button
+        onClick={() => navigate('/blog')}
+        className="inline-flex items-center text-blue-600 hover:underline mb-4"
+      >
         <ChevronLeft className="mr-2" size={20} />
         Back to Blog List
-      </a>
+      </button>
       <article className="bg-white rounded-lg shadow-lg p-6">
         <h1 className="text-4xl font-bold mb-4">{adminBlog.title}</h1>
         <div className="flex items-center text-gray-600 mb-6">
@@ -90,6 +99,8 @@ const AdminBlogDetail = () => {
         />
       </article>
     </div>
+    <Footer/>
+  </>
   );
 };
 

@@ -58,7 +58,7 @@ const Templates = () => {
           <h1 className="text-4xl font-bold text-white text-center mb-12">Design Templates</h1>
           
           {/* Invoice Templates Section */}
-          <section className="mb-16">
+          <section id='InvoiceTemplates' className="mb-16">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-2xl font-semibold text-white">Invoice Templates</h2>
               <div className="badge badge-primary badge-outline">{htmlFiles.length} templates</div>
@@ -90,7 +90,7 @@ const Templates = () => {
           </section>
           
           {/* Logo Templates Section */}
-          <section>
+          <section id='LogoTemplates'>
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-2xl font-semibold text-white">Logo Templates</h2>
               <div className="badge badge-secondary badge-outline">{images.length} templates</div>

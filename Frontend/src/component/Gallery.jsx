@@ -1,137 +1,170 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Image, Video, FileText, Loader, ExternalLink } from 'lucide-react';
+import { ImageOutlined, VideoLibrary, Description, DeleteOutline } from '@mui/icons-material';
+import { Button, Card, CardContent, CardMedia, Typography, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, CircularProgress } from '@mui/material';
 
 const Gallery = () => {
   const [images, setImages] = useState([]);
   const [videos, setVideos] = useState([]);
   const [htmlFiles, setHtmlFiles] = useState([]);
-  const [loadingImages, setLoadingImages] = useState(true);
-  const [loadingVideos, setLoadingVideos] = useState(true);
-  const [loadingHtml, setLoadingHtml] = useState(true);
+  const [loading, setLoading] = useState(true);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [fileToDelete, setFileToDelete] = useState(null);
 
   useEffect(() => {
-    const fetchImages = async () => {
-      try {
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/admin/gallery/images`);
-        setImages(response.data);
-      } catch (error) {
-        console.error("Error fetching images:", error);
-      } finally {
-        setLoadingImages(false);
-      }
-    };
-
-    const fetchVideos = async () => {
-      try {
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/admin/gallery/videos`);
-        setVideos(response.data);
-      } catch (error) {
-        console.error("Error fetching videos:", error);
-      } finally {
-        setLoadingVideos(false);
-      }
-    };
-    
-    const fetchHtml = async () => {
-      try {
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/admin/gallery/html`);
-        setHtmlFiles(response.data);
-      } catch (error) {
-        console.error("Error fetching HTML files:", error);
-      } finally {
-        setLoadingHtml(false);
-      }
-    };
-
-    fetchImages();
-    fetchVideos();
-    fetchHtml();
+    fetchMedia();
   }, []);
 
-  if (loadingImages || loadingVideos || loadingHtml) {
+  const fetchMedia = async () => {
+    try {
+      const [imagesRes, videosRes, htmlRes] = await Promise.all([
+        axios.get(`${import.meta.env.VITE_API_URL}/api/admin/gallery/images`),
+        axios.get(`${import.meta.env.VITE_API_URL}/api/admin/gallery/videos`),
+        axios.get(`${import.meta.env.VITE_API_URL}/api/admin/gallery/html`)
+      ]);
+      setImages(imagesRes.data);
+      setVideos(videosRes.data);
+      setHtmlFiles(htmlRes.data);
+    } catch (error) {
+      console.error("Error fetching media:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteClick = (type, filename) => {
+    setFileToDelete({ type, filename });
+    setOpenDialog(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!fileToDelete) return;
+  
+    try {
+      await axios.delete(`${import.meta.env.VITE_API_URL}/api/admin/gallery/${fileToDelete.type}/${fileToDelete.filename}`);
+      if (fileToDelete.type === 'images') {
+        setImages(images.filter(image => image !== fileToDelete.filename));
+      } else if (fileToDelete.type === 'videos') {
+        setVideos(videos.filter(video => video !== fileToDelete.filename));
+      } else if (fileToDelete.type === 'html') {
+        setHtmlFiles(htmlFiles.filter(html => html.file !== fileToDelete.filename));
+      }
+    } catch (error) {
+      console.error(`Error deleting ${fileToDelete.type}:`, error);
+    } finally {
+      setOpenDialog(false);
+      setFileToDelete(null);
+    }
+  };
+  
+  if (loading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <Loader className="animate-spin text-blue-600" size={48} />
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <CircularProgress />
       </div>
     );
   }
 
   const MediaCard = ({ type, src, alt, filename }) => (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden">
-      <div className="p-4">
-        {type === 'image' && (
-          <img src={src} alt={alt} className="w-full h-48 object-cover rounded" />
-        )}
-        {type === 'video' && (
-          <video controls className="w-full h-48 object-cover rounded">
-            <source src={src} type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
-        )}
-        {type === 'html' && (
-          <img src={src} alt={alt} className="w-full h-48 object-cover rounded" />
-        )}
-      </div>
-      <div className="px-4 py-2 bg-gray-50 flex justify-between items-center">
-        <span className="text-sm text-gray-600 truncate flex-1">{filename}</span>
-        {type === 'image' && <Image size={20} className="text-blue-600" />}
-        {type === 'video' && <Video size={20} className="text-blue-600" />}
-        {type === 'html' && <FileText size={20} className="text-blue-600" />}
-      </div>
-    </div>
+    <Card>
+      <CardMedia
+        component={type === 'video' ? 'video' : 'img'}
+        height="140"
+        image={src}
+        alt={alt}
+        controls={type === 'video'}
+      />
+      <CardContent>
+        <Typography variant="body2" color="text.secondary" noWrap>
+          {filename}
+        </Typography>
+        <Button
+          startIcon={<DeleteOutline />}
+          color="error"
+          onClick={() => handleDeleteClick(type + 's', filename)}
+        >
+          Delete
+        </Button>
+        {type === 'image' && <ImageOutlined />}
+        {type === 'video' && <VideoLibrary />}
+        {type === 'html' && <Description />}
+      </CardContent>
+    </Card>
   );
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
-      <h2 className="text-2xl font-semibold text-gray-800 mb-6">Media Gallery</h2>
-      
-      {/* Images Section */}
-      <div className="mb-8">
-        <h3 className="text-xl font-semibold text-gray-700 mb-4">Images</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {images.map((image, index) => (
+    <div>
+      {/* <Typography variant="h4" gutterBottom>
+        Media Gallery
+      </Typography> */}
+       {/* HTML Files Section */}
+       <Typography className="text-white" variant="h5" gutterBottom style={{ marginTop: '2rem' }}>
+        HTML Templates
+      </Typography>
+      <Grid container spacing={2}>
+        {htmlFiles.map((htmlFile, index) => (
+          <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
             <MediaCard
-              key={index}
-              type="image"
-              src={`${import.meta.env.VITE_API_URL}/uploads/images/${image}`}
-              alt={`Uploaded image ${index}`}
-              filename={image}
-            />
-          ))}
-        </div>
-      </div>
-
-      {/* Videos Section */}
-      <div className="mb-8">
-        <h3 className="text-xl font-semibold text-gray-700 mb-4">Videos</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {videos.map((video, index) => (
-            <MediaCard
-              key={index}
-              type="video"
-              src={`${import.meta.env.VITE_API_URL}/uploads/videos/${video}`}
-              filename={video}
-            />
-          ))}
-        </div>
-      </div>
-
-      {/* HTML Files Section */}
-      <div>
-        <h3 className="text-xl font-semibold text-gray-700 mb-4">HTML Templates</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {htmlFiles.map((htmlFile, index) => (
-            <MediaCard
-              key={index}
               type="html"
               src={`${import.meta.env.VITE_API_URL}/uploads/html/${htmlFile.file}.png`}
               alt={`Thumbnail for ${htmlFile.file}`}
               filename={htmlFile.file}
             />
-          ))}
-        </div>
-      </div>
+          </Grid>
+        ))}
+      </Grid>
+      
+      {/* Images Section */}
+      <Typography className="text-white" variant="h5" gutterBottom>
+        Images
+      </Typography>
+      <Grid container spacing={2}>
+        {images.map((image, index) => (
+          <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
+            <MediaCard
+              type="image"
+              src={`${import.meta.env.VITE_API_URL}/uploads/images/${image}`}
+              alt={`Uploaded image ${index}`}
+              filename={image}
+            />
+          </Grid>
+        ))}
+      </Grid>
+
+      {/* Videos Section */}
+      {/* <Typography variant="h5" gutterBottom style={{ marginTop: '2rem' }}>
+        Videos
+      </Typography> */}
+      <Grid container spacing={2}>
+        {videos.map((video, index) => (
+          <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
+            <MediaCard
+              type="video"
+              src={`${import.meta.env.VITE_API_URL}/uploads/videos/${video}`}
+              filename={video}
+            />
+          </Grid>
+        ))}
+      </Grid>
+
+     
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog
+        open={openDialog}
+        onClose={() => setOpenDialog(false)}
+      >
+        <DialogTitle>Confirm Deletion</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to delete this file? This action cannot be undone.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenDialog(false)}>Cancel</Button>
+          <Button onClick={handleDeleteConfirm} color="error">Delete</Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };
